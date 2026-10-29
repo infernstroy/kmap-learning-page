@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>K-Maps, SOP/POS and Logic Gates: Notes and Quiz</title>
+<style>
+:root{--bg:#f5f7fa;--ink:#16213a;--mut:#56627e;--line:#d5dbe8;--card:#fff;--acc:#1d4ed8;--ok:#0f7b4a;--bad:#b42318;--p:#2563eb;--q:#16a34a;--r:#ea580c;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--ink:#e6ebf7;--mut:#9aa6c2;--line:#26324d;--card:#172038;--acc:#7aa2ff;--ok:#4cc38a;--bad:#ff8a7a;--p:#60a5fa;--q:#4ade80;--r:#fb923c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1626;--ink:#e6ebf7;--mut:#9aa6c2;--line:#26324d;--card:#172038;--acc:#7aa2ff;--ok:#4cc38a;--bad:#ff8a7a;--p:#60a5fa;--q:#4ade80;--r:#fb923c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3{font-family:Georgia,"Iowan Old Style",serif;line-height:1.25;margin:0 0 .5em}
+h1{font-size:1.75rem}h2{font-size:1.35rem;margin-top:2em;padding-top:.6em;border-top:2px solid var(--ink)}h3{font-size:1.05rem;margin-top:1.4em}
+p{margin:.5em 0}.sub{color:var(--mut)}
+code,.x{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 5px;white-space:nowrap}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+nav a{padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--acc);text-decoration:none;background:var(--card);font-size:.9rem}
+.box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:6px;padding:10px 14px;margin:12px 0}
+.sc{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.92rem}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}th{background:var(--bg)}
+.km{width:auto;margin:0 auto}.km td,.km th{width:62px;height:54px;font-weight:600;position:relative}
+.km td small{position:absolute;top:1px;left:3px;font-size:.62rem;font-weight:400;color:var(--mut)}
+.d{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px}.P{background:var(--p)}.Q{background:var(--q)}.R{background:var(--r)}
+.one{background:color-mix(in srgb,var(--acc) 14%,var(--card))}
+.qz{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:12px 14px;margin:14px 0}
+.qz legend{font-weight:600;padding:0 6px}
+.qz label{display:block;padding:9px 10px;margin:6px 0;border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.qz input{margin-right:8px}
+.qz label.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
+.qz label.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--card))}
+.ex{margin:8px 0 0;font-size:.92rem}.ex b.g{color:var(--ok)}.ex b.b{color:var(--bad)}
+button{font:inherit;font-weight:600;padding:11px 20px;border-radius:6px;border:0;background:var(--acc);color:#fff;cursor:pointer;margin-right:8px}
+:root[data-theme="dark"] button{color:#0f1626}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button{color:#0f1626}}
+button.alt{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#res{font-size:1.2rem;font-weight:700;margin:14px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Karnaugh Maps, SOP/POS and Logic Gates</h1>
+<p class="sub">Digital Logic notes with a 10-question self-check quiz. In this page, A′ means NOT A.</p>
+<nav><a href="#notes">Notes</a><a href="#example">Worked example</a><a href="#quiz">Take the quiz</a></nav>
+
+<h2 id="notes">1. Boolean basics and truth tables</h2>
+<p>A <b>Boolean expression</b> combines variables (0 or 1) using AND (<code>AB</code>), OR (<code>A+B</code>) and NOT (<code>A′</code>). A <b>truth table</b> lists the output for every input combination, so <i>n</i> inputs give 2<sup>n</sup> rows.</p>
+<div class="box">Useful laws: <code>A+AB = A</code>, <code>AB+AB′ = A</code>, <code>A+A′ = 1</code>, <code>A·A′ = 0</code>, De Morgan: <code>(AB)′ = A′+B′</code>, <code>(A+B)′ = A′B′</code>.</div>
+
+<h2>2. The seven basic logic gates</h2>
+<div class="sc"><table>
+<tr><th>A</th><th>B</th><th>AND<br>AB</th><th>OR<br>A+B</th><th>NOT<br>A′</th><th>NAND<br>(AB)′</th><th>NOR<br>(A+B)′</th><th>XOR<br>A⊕B</th><th>XNOR<br>(A⊕B)′</th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+</table></div>
+<p>NOT depends only on A. NAND and NOR are <b>universal gates</b>: any circuit can be built from either one. XOR is 1 when the inputs differ; XNOR is 1 when they match.</p>
+
+<h2>3. SOP and POS</h2>
+<p>A <b>minterm</b> is an AND of all variables where each appears once (complemented if the input bit is 0). For ABC = 101 the minterm is <code>AB′C</code> = m5. A <b>maxterm</b> is an OR of all variables, complemented if the input bit is 1. For ABC = 101 it is <code>A′+B+C′</code> = M5.</p>
+<p><b>SOP (Sum of Products)</b>: OR together the minterms where F = 1. Example: <code>F = AB + A′C</code>.</p>
+<p><b>POS (Product of Sums)</b>: AND together the maxterms where F = 0. Example: <code>F = (A+B)(A′+C)</code>.</p>
+<p>On a K-map, group the 1s for SOP, or group the 0s for POS (then read each group as a sum of the variables that stay constant, complemented as needed).</p>
+
+<h2>4. Karnaugh maps</h2>
+<p>A <b>K-map</b> is a grid version of the truth table arranged so that neighbouring cells differ by exactly one variable. Grouping neighbours removes the variable that changes, which simplifies the expression without algebra. A 4-variable map has 16 cells.</p>
+<h3>Grouping rules</h3>
+<ul>
+<li><b>Gray-code order:</b> label rows and columns 00, 01, 11, 10 (never 00, 01, 10, 11).</li>
+<li><b>Powers of two:</b> groups contain 1, 2, 4, 8 or 16 cells. Sizes like 3 or 6 are not allowed.</li>
+<li><b>Rectangles only:</b> groups are rectangles of adjacent cells, no diagonals.</li>
+<li><b>Wrap-around:</b> the left and right edges are adjacent, and so are the top and bottom edges. The four corners form one group.</li>
+<li><b>Go big:</b> use the largest groups possible. Groups may overlap. Cover every 1 at least once.</li>
+<li><b>Group size vs variables removed:</b> a group of 2 removes 1 variable, a group of 4 removes 2, a group of 8 removes 3.</li>
+<li><b>Don’t-cares (X):</b> include them in a group only if it makes the group bigger.</li>
+</ul>
+
+<h2 id="example">5. Worked example</h2>
+<p>Simplify <code>F(A,B,C,D) = Σm(0, 1, 2, 5, 8, 9, 10)</code>. Rows are AB, columns are CD.</p>
+<div class="sc"><table class="km" id="km"></table></div>
+<p><span class="d P"></span><b>Group P</b>: the four corners m0, m2, m8, m10 (wrap-around both ways). B and D stay 0, so <code>B′D′</code>.<br>
+<span class="d Q"></span><b>Group Q</b>: m0, m1, m8, m9 (top row and bottom row wrap). B and C stay 0, so <code>B′C′</code>.<br>
+<span class="d R"></span><b>Group R</b>: m1 and m5 (pair). A, C stay 0 and D stays 1, so <code>A′C′D</code>.</p>
+<div class="box"><b>Result (SOP):</b> <code>F = B′D′ + B′C′ + A′C′D</code><br>Check m5 (A=0,B=1,C=0,D=1): A′C′D = 1·1·1 = 1, so F = 1. ✓</div>
+
+<h2 id="quiz">6. Self-check quiz (10 questions)</h2>
+<form id="f" onsubmit="return false"></form>
+<p><button id="sub">Submit answers</button><button class="alt" id="rst" type="button">Try again</button></p>
+<div id="res" role="status" aria-live="polite"></div>
+</main>
+<script>
+var Q=[
+["How many rows does the truth table of a 3-input function have?",["4","6","8","16"],2,"Each input has 2 values, so there are 2³ = 8 rows."],
+["Which column order is correct for the CD labels of a 4-variable K-map?",["00, 01, 10, 11","00, 01, 11, 10","00, 11, 01, 10","11, 10, 01, 00"],1,"K-maps use Gray code, so only one bit changes between neighbours: 00, 01, 11, 10."],
+["Which group size is NOT allowed on a K-map?",["1","2","6","8"],2,"Groups must contain a power-of-two number of cells (1, 2, 4, 8, 16). Six is not."],
+["What is the output of a 2-input XOR gate when A = 1 and B = 1?",["0","1","Undefined","Same as OR"],0,"XOR is 1 only when the inputs differ. Equal inputs give 0. (OR would give 1.)"],
+["Which 2-input gate outputs 1 only when both inputs are 0?",["AND","XOR","NAND","NOR"],3,"NOR = (A+B)′, which is 1 only for A = B = 0."],
+["Which expression is in Sum of Products (SOP) form?",["(A+B)(A′+C)","AB + A′C","A′(B+C)","(A+B′)(C+D′)"],1,"SOP is an OR of AND terms: AB + A′C. The others are products of sums or mixed forms."],
+["For inputs A=1, B=0, C=1, which is the minterm?",["A′BC′","A′+B+C′","A+B′+C","AB′C"],3,"A minterm is an AND using A for 1 and A′ for 0: A·B′·C = m5. A′+B+C′ is the maxterm M5."],
+["Simplify AB + AB′.",["A+B","B","A","1"],2,"AB + AB′ = A(B + B′) = A·1 = A."],
+["In a 4-variable K-map, a group of 4 adjacent 1s eliminates how many variables?",["0","1","2","4"],2,"A group of 2ᵏ cells removes k variables. 4 = 2², so 2 variables are removed."],
+["Which pair of minterms is adjacent only through K-map wrap-around?",["m1 and m6","m3 and m12","m0 and m5","m0 and m2"],3,"m0 (0000) and m2 (0010) differ in one bit and sit in the first and last columns of the same row."]
+];
+var L="ABCD",f=document.getElementById("f");
+Q.forEach(function(q,i){var s=document.createElement("fieldset");s.className="qz";
+var h='<legend>Q'+(i+1)+'. '+q[0]+'</legend>';
+q[1].forEach(function(o,j){h+='<label><input type="radio" name="q'+i+'" value="'+j+'"> '+L[j]+'. '+o+'</label>'});
+h+='<p class="ex" hidden></p>';s.innerHTML=h;f.appendChild(s)});
+document.getElementById("sub").onclick=function(){
+var sc=0,un=0;
+Q.forEach(function(q,i){var s=f.children[i],ls=s.querySelectorAll("label"),c=s.querySelector("input:checked"),e=s.querySelector(".ex");
+ls.forEach(function(l){l.className=""});
+ls[q[2]].className="ok";
+var v=c?+c.value:-1;
+if(v===q[2]){sc++;e.innerHTML='<b class="g">Correct.</b> '+q[3]}
+else{if(v<0)un++;else ls[v].className="no";e.innerHTML='<b class="b">'+(v<0?'Not answered.':'Incorrect.')+'</b> Correct answer: '+L[q[2]]+'. '+q[3]}
+e.hidden=false;s.querySelectorAll("input").forEach(function(x){x.disabled=true})});
+var m=sc>=9?"Excellent work!":sc>=7?"Good job. Review the explanations below.":sc>=5?"Getting there. Re-read the notes and try again.":"Revisit the notes above, then try again.";
+document.getElementById("res").textContent="Score: "+sc+" / "+Q.length+(un?" ("+un+" unanswered)":"")+". "+m;
+document.getElementById("res").scrollIntoView({behavior:"smooth",block:"center"})};
+document.getElementById("rst").onclick=function(){
+f.reset();f.querySelectorAll("input").forEach(function(x){x.disabled=false});
+f.querySelectorAll("label").forEach(function(l){l.className=""});
+f.querySelectorAll(".ex").forEach(function(e){e.hidden=true});
+document.getElementById("res").textContent="";
+document.getElementById("quiz").scrollIntoView()};
+/* K-map for worked example */
+var cols=["00","01","11","10"],rows=["00","01","11","10"],
+mt=[[0,1,3,2],[4,5,7,6],[12,13,15,14],[8,9,11,10]],
+ones={0:"PQ",1:"QR",2:"P",5:"R",8:"PQ",9:"Q",10:"P"},
+t='<tr><th>AB \\ CD</th>'+cols.map(function(c){return"<th>"+c+"</th>"}).join("")+"</tr>";
+rows.forEach(function(r,i){t+="<tr><th>"+r+"</th>";
+mt[i].forEach(function(m){var g=ones[m];
+t+='<td'+(g?' class="one"':'')+'><small>m'+m+'</small>'+(g?"1<br>"+g.split("").map(function(k){return'<span class="d '+k+'"></span>'}).join(""):"0")+"</td>"});
+t+="</tr>"});
+document.getElementById("km").innerHTML=t;
+</script>
+</body>
+</html>
